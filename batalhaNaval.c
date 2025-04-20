@@ -1,14 +1,16 @@
 #include <stdio.h>
 
 // Constantes do jogo
-int TAMANHO_TABULEIRO = 10;
-int TAMANHO_NAVIO = 3;
+#define TAMANHO_TABULEIRO 10
+#define TAMANHO_NAVIO 3
+#define AGUA 0
+#define NAVIO 3
 
 // Função para inicializar o tabuleiro
 void inicializarTabuleiro(int tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO]) {
     for (int i = 0; i < TAMANHO_TABULEIRO; i++) {
         for (int j = 0; j < TAMANHO_TABULEIRO; j++) {
-            tabuleiro[i][j] = 0; // 0 representa água
+            tabuleiro[i][j] = AGUA;
         }
     }
 }
@@ -23,7 +25,7 @@ return 0; // Falha
 }
    // Posiciona o navio
    for (int j = coluna; j < coluna + TAMANHO_NAVIO; j++) {
-    tabuleiro[linha][j] = 3; // 3 representa parte de um navio
+    tabuleiro[linha][j] = NAVIO; // Navio representa 3 parte de um navio
 }
 
 return 1; // Sucesso
@@ -40,7 +42,7 @@ return 0; // Falha
 
 // Posiciona o navio
 for (int i = linha; i < linha + TAMANHO_NAVIO; i++) {
-tabuleiro[i][coluna] = 3; // 3 representa parte de um navio
+tabuleiro[i][coluna] = NAVIO; // 3 representa parte de um navio
 }
 
 return 1; // Sucesso
@@ -64,6 +66,29 @@ void exibirTabuleiro(int tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO]) {
     }
 }
 
+int posicionarNavioDiagonalPrincipal(int tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO], int linha, int coluna) {
+    // Verifica se cabe no tabuleiro
+    if (linha + TAMANHO_NAVIO > TAMANHO_TABULEIRO || coluna + TAMANHO_NAVIO > TAMANHO_TABULEIRO) {
+        return 0;
+    }
+    for (int k = 0; k < TAMANHO_NAVIO; k++) {
+        tabuleiro[linha + k][coluna + k] = NAVIO;
+    }
+    return 1;
+}
+
+int posicionarNavioDiagonalSecundaria(int tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO], int linha, int coluna) {
+    // Verifica se cabe no tabuleiro
+    if (linha + TAMANHO_NAVIO > TAMANHO_TABULEIRO || coluna - TAMANHO_NAVIO + 1 < 0) {
+        return 0;
+    }
+     // Posiciona o navio
+     for (int k = 0; k < TAMANHO_NAVIO; k++) {
+        tabuleiro[linha + k][coluna - k] = NAVIO;
+    }
+    return 1;
+}
+
 int main() {
     int tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO];
     
@@ -84,7 +109,18 @@ int main() {
         printf("Falha ao posicionar navio vertical.\n");
         return 1;
     }
+
+    // Navios diagonais
+    if (!posicionarNavioDiagonalPrincipal(tabuleiro, 1, 1)) {
+        printf("Erro ao posicionar navio diagonal principal em (1,1)\n");
+        return 1;
+    }
     
+    if (!posicionarNavioDiagonalSecundaria(tabuleiro, 0, 8)) {
+        printf("Erro ao posicionar navio diagonal secundária em (0,8)\n");
+        return 1;
+    }
+
     // Exibe o tabuleiro com os navios posicionados
     exibirTabuleiro(tabuleiro);
     
